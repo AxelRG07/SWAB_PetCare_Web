@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <ul id="ul_usuarios">
+
+    </ul>
+    <p id="error"></p>
+
+    <script>
+    const getUsuarios = async () => {
+        try {
+            const r = await fetch('/api/v1/customUsers/', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                },
+            });
+
+            const lista = document.getElementById('ul_usuarios');
+            lista.innerHTML = '';
+
+            if (r.ok) {
+                const dt = await r.json();
+
+                (dt).forEach(user => {
+                    const userHTML = document.createElement('li');
+                    const p = document.createElement('p');
+                    p.textContent = user.username;
+                    userHTML.appendChild(p);
+                    lista.appendChild(userHTML);
+                })
+            }
+
+        } catch (e) {
+            console.log(e);
+            document.getElementById('error').textContent = "error de conexion con el servidor"
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getUsuarios();
+    })
+</script>
+{% endblock %}
+

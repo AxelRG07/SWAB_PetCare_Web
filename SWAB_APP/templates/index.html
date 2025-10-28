@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block nav %}
+    {% if user.tipo == "admin" %}
+        <a href="{% url 'modulo_usuarios' %}">Modulo de usuarios</a>
+        <a href="">Modulo de mascotas</a>
+        <a href="">Modulo de refugios</a>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <h2>Pagina de inicio</h2>
+    {{ user.tipo }}
+{% endblock %}
