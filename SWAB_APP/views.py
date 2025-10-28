@@ -7,3 +7,7 @@ from .models import *
 class CustomUserView(viewsets.ModelViewSet):
     serializer_class = CustomUserSerializer
     queryset = CustomUser.objects.all()
+
+
+def registrar_usuario(request):
+    return render(request, 'registrar_usuario.html')

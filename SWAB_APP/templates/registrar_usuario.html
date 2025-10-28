@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Registro de nuevo usuario</h2>
+
+<form id="formUsuario">
+{% csrf_token %}
+  <input type="text" id="first_name" placeholder="Nombre" required>
+  <input type="text" id="last_name" placeholder="Apellido" required>
+  <input type="text" id="username" placeholder="Nombre de usuario" required>
+  <input type="password" id="password" placeholder="Contraseña" required>
+  <input type="email" id="email" placeholder="Correo electrónico" required>
+
+
+  <select id="tipo">
+    <option value="adoptante">Adoptante</option>
+    <option value="director">Director</option>
+    <option value="admin">Administrador</option>
+  </select>
+
+  <button type="submit">Registrar</button>
+</form>
+
+<p id="mensaje"></p>
+
+<script>
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      // Does this cookie string begin with the name we want?
+      if (cookie.substring(0, name.length + 1) === (name + "=")) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+document.getElementById('formUsuario').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const usuario = {
+    first_name: document.getElementById('first_name').value,
+    last_name: document.getElementById('last_name').value,
+    username: document.getElementById('username').value,
+    email: document.getElementById('email').value,
+    password: document.getElementById('password').value,
+    tipo: document.getElementById('tipo').value
+  };
+
+  try {
+    const respuesta = await fetch('/api/v1/customUsers/', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          "X-CSRFToken": getCookie("csrftoken"),
+
+      },
+      body: JSON.stringify(usuario)
+    });
+
+    const mensaje = document.getElementById('mensaje');
+
+    if (respuesta.ok) {
+      mensaje.textContent = "✅ Usuario registrado correctamente.";
+      mensaje.style.color = "green";
+      e.target.reset();
+    } else {
+      const error = await respuesta.json();
+      mensaje.textContent = "❌ Error al registrar: " + JSON.stringify(error);
+      mensaje.style.color = "red";
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    document.getElementById('mensaje').textContent = "⚠️ Error de conexión con el servidor.";
+  }
+});
+</script>
+{% endblock %}

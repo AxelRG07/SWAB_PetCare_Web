@@ -8,4 +8,5 @@ router.register(r'customUsers', CustomUserView, 'customUsers')
 
 urlpatterns = [
     path('api/v1/', include(router.urls)),
+    path('registrar/usuario/', registrar_usuario, name='registrar_usuario'),
 ]
