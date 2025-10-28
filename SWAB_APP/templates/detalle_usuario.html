@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <main class="container">
+        <div class="row">
+            <div class="col-md-4 offset-md-4">
+                {{ error }}
+                <h1 class="text-secondary"></h1>
+
+                <form id="formUsuario">
+                    <input class="form-control" type="text" id="first_name" placeholder="nombre" value="{{ usuario.first_name }}"
+                           required>
+
+                    <input class="form-control" type="text" id="last_name" placeholder="Apellido" value="{{ usuario.last_name }}"
+                           required>
+                    <input class="form-control" type="text" id="username" placeholder="Nombre de usuario" value="{{ usuario.username }}"
+                           required>
+                    <input class="form-control" type="email" id="email" placeholder="Correo electrónico" value="{{ usuario.email }}"
+                           required>
+
+                    <select id="tipo" class="form-select">
+                        <option value="adoptante">Adoptante</option>
+                        <option value="director">Director</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+                <p id="mensaje"></p>
+                <div class="d-flex mt-5">
+                    <button id="btnEliminar" class="btn btn-danger">Delete</button>
+                </div>
+                    <button class="btn btn-success"><a class="nav-link" href="{% url 'modulo_usuarios' %}">Hecho</a>
+                </button>
+            </div>
+        </div>
+    </main>
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        const msg = document.getElementById('mensaje');
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        document.getElementById('formUsuario').addEventListener('submit', async (e) => {
+            e.preventDefault()
+
+            const id = {{ usuario.id }};
+
+            const datos_actualizados = {
+                first_name: document.getElementById('first_name').value,
+                last_name: document.getElementById('last_name').value,
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                tipo: document.getElementById('tipo').value,
+            };
+
+            try {
+                const r = await fetch(`/api/v1/customUsers/${id}/`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        "X-CSRFToken": getCookie("csrftoken"),
+
+                    },
+                    body: JSON.stringify(datos_actualizados)
+                });
+
+
+                console.log("Estado:", r.status);
+                const text = await r.text();
+                console.log("Respuesta:", text);
+                if (r.ok) {
+                    msg.textContent = "✅ Usuario actualizado correctamente.";
+                    msg.style.color = "green";
+                } else {
+                    const error = await r.text();
+                    msg.textContent = "❌ Error al actualizar: " + error;
+                    msg.style.color = "red";
+                }
+            } catch (e) {
+                console.error(e);
+                document.getElementById('mensaje').textContent = "⚠️ Error de conexión con el servidor.";
+            }
+        });
+
+        document.getElementById('btnEliminar').addEventListener('click', async (e) => {
+            e.preventDefault()
+            const id = {{ usuario.id }};
+
+            try {
+                const r = await fetch(`/api/v1/customUsers/${id}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        "X-CSRFToken": getCookie("csrftoken"),
+                    }
+                })
+
+                if (r.ok) {
+                    msg.textContent = "✅ Usuario eliminado correctamente.";
+                    msg.style.color = "green";
+                    window.location.href = "{% url 'modulo_usuarios' %}"
+                } else {
+                    const error = await r.text();
+                    msg.textContent = "❌ Error al eliminar: " + error;
+                    msg.style.color = "red";
+                }
+            } catch (e) {
+                console.error(e);
+                document.getElementById('mensaje').textContent = "⚠️ Error de conexión con el servidor.";
+            }
+
+        })
+
+    </script>
+{% endblock %}

@@ -1,6 +1,6 @@
 from idlelib.rpc import request_queue
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from rest_framework import viewsets
 from .serializer import CustomUserSerializer, RefugioSerializer
 from .models import *
@@ -57,3 +57,11 @@ def index(request):
 
 def modulo_usuarios(request):
     return render(request, 'modulo_usuarios.html')
+
+def detalles_usuario(request, id_usuario):
+    if request.method == 'GET':
+        usuario = get_object_or_404(CustomUser, id=id_usuario)
+
+        return render(request, 'detalle_usuario.html', {
+            'usuario': usuario,
+        })

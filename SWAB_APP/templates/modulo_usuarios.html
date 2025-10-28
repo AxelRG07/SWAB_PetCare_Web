@@ -7,39 +7,61 @@
     <p id="error"></p>
 
     <script>
-    const getUsuarios = async () => {
-        try {
-            const r = await fetch('/api/v1/customUsers/', {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                },
-            });
 
-            const lista = document.getElementById('ul_usuarios');
-            lista.innerHTML = '';
-
-            if (r.ok) {
-                const dt = await r.json();
-
-                (dt).forEach(user => {
-                    const userHTML = document.createElement('li');
-                    const p = document.createElement('p');
-                    p.textContent = user.username;
-                    userHTML.appendChild(p);
-                    lista.appendChild(userHTML);
-                })
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
             }
-
-        } catch (e) {
-            console.log(e);
-            document.getElementById('error').textContent = "error de conexion con el servidor"
+            return cookieValue;
         }
-    }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        getUsuarios();
-    })
-</script>
+        const getUsuarios = async () => {
+            try {
+                const r = await fetch('/api/v1/customUsers/', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                });
+
+                const lista = document.getElementById('ul_usuarios');
+                lista.innerHTML = '';
+
+                if (r.ok) {
+                    const dt = await r.json();
+
+                    dt.forEach(user => {
+                        const userHTML = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.textContent = user.username;
+                        a.href = `/detalles/usuario/${user.id}/`;
+                        userHTML.append(a);
+                        console.log(dt);
+                        console.log(a);
+
+                        lista.appendChild(userHTML);
+                    })
+                }
+
+
+            } catch (e) {
+                console.log(e);
+                document.getElementById('error').textContent = "error de conexion con el servidor"
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            getUsuarios();
+        })
+    </script>
 {% endblock %}
 
