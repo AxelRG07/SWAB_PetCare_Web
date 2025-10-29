@@ -65,19 +65,22 @@ def registrar_refugio(request):
             })
 
 @login_required(login_url='signin')
-def registrar_mascota(request):
+def registrar_mascota(request, id_refugio):
     if request.method == 'GET':
+        refugio = Refugio.objects.get(id=id_refugio)
         return render(request, 'registrar_mascota.html', {
-            'form': RefugioForm(),
+            'form': MascotaForm(),
+            'refugio': refugio,
         })
     else:
         try:
-            form = RefugioForm(request.POST, request.FILES)
+            form = MascotaForm(request.POST, request.FILES)
+            form.refugio = Refugio.objects.get(id=id_refugio)
             form.save()
-            return redirect('modulo_refugios')
+            return redirect(f'detalles/refugio/{id_refugio}/')
         except ValueError:
-            return render(request, 'registrar_refugio.html', {
-                'form': RefugioForm(),
+            return render(request, 'registrar_mascota.html', {
+                'form': MascotaForm(),
                 'error': 'Datos incorrectos',
             })
 
@@ -162,9 +165,23 @@ def modulo_refugios(request):
 def detalles_refugio(request, id_refugio):
     if request.method == 'GET':
         refugio = get_object_or_404(Refugio, id=id_refugio)
+        mascotas = Mascota.objects.filter(refugio=refugio)
         form = RefugioForm(instance=refugio)
         return render(request, 'detalle_refugio.html', {
             'refugio': refugio,
             'usuario': request.user,
             'form': form,
+            'mascotas': mascotas,
+        })
+
+
+@login_required(login_url='signin')
+def detalles_mascota(request, id_mascota):
+    if request.method == 'GET':
+        mascota = get_object_or_404(Mascota, id=id_mascota)
+        form = MascotaForm(instance=mascota)
+        return render(request, 'detalle_mascota.html', {
+            'usuario': request.user,
+            'form': form,
+            'mascota': mascota,
         })

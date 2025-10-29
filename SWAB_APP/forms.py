@@ -22,11 +22,11 @@ class MascotaForm(forms.ModelForm):
         fields = '__all__'
         widgets = {
             'nombre': forms.TextInput(attrs={'class':'form-control'}),
-            'especie': forms.TextInput(attrs={'class':'form-control'}),
+            'especie': forms.Select(attrs={'class':'form-select'}),
             'edad': forms.NumberInput(attrs={'class':'form-control'}),
             'sexo': forms.Select(attrs={'class':'form-select'}),
-            'tamaño': forms.TextInput(attrs={'class':'form-control'}),
-            'estado_salud': forms.TextInput(attrs={'class':'form-control'}),
+            'tamaño': forms.Select(attrs={'class':'form-select'}),
+            'estado_salud': forms.Select(attrs={'class':'form-select'}),
             'foto': forms.FileInput(attrs={'class':'form-control'}),
             'estado': forms.Select(attrs={'class':'form-select'}),
             'refugio': forms.Select(attrs={'class':'form-select'}),

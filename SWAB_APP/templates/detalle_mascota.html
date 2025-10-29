@@ -1,64 +1,32 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
     <main class="container d-flex flex-row justify-content-around align-items-center p-5 ">
         <div class="container w-50 ">
-            <h1 id="refugioNombre" class="display-1  ">{{ refugio.nombre }}</h1>
+            <h1 id="mascotaNombre" class="display-1  ">{{ mascota.nombre }}</h1>
         </div>
         <div class="fab-container">
             <div class="fab fab-main">
                 <i class="bi bi-plus-lg">+</i>
             </div>
             <div class="fab fab-option">
-                <a id="btnEditar" title="Editar Refugio" class="">Editar</a>
+                <a id="btnEditar" title="Editar Mascota" class="">Editar</a>
             </div>
             <div class="fab fab-option">
                 <a id="btnEliminar" title="eliminar">Eliminar</a>
             </div>
-            <div class="fab fab-option">
-                <a href="{% url 'registrar_mascota' refugio.id %}" title="Nueva Mascota">Agregar mascota</a>
-            </div>
         </div>
         <div class="container w-25">
-            {% if refugio.logo %}
-                <img id="refugioLogo" src="{{ refugio.logo.url }}" alt="{{ refugio.nombre }}"
+            {% if mascota.foto %}
+                <img id="mascotaFoto" src="{{ mascota.foto.url }}" alt="{{ mascota.nombre }}"
                      class="img-fluid rounded  w-100">
             {% endif %}
         </div>
     </main>
 
     <section class="text-center p-5 container">
-        <p id="refugioDesc" class="text-dark-emphasis">{{ refugio.descripcion }}</p>
-    </section>
-
-    <section class="text-center p-5 container">
-        <div class="row">
-            <div class="col-md-6 offset-md-3">
-                {% if mascotas %}
-                    <h1 class="text-center display-5 py-3">Esperando compañía :(</h1>
-                {% else %}
-                    <h1 class="text-center display-3 py-3">No hay mascotas registradas</h1>
-                {% endif %}
-                <ul class="list-group">
-                    {% for mascota in mascotas %}
-                        <li class="list-group-item d-flex justify-content-center border-0 mt-3">
-                            <div class="card w-50">
-                                {% if mascota.foto %}
-                                    <img src="{{ mascota.foto.url }}" class="card-img-top object-fit-container"
-                                         alt="{{ mascota.nombre }}">
-                                {% endif %}
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ mascota.nombre.upper }}</h5>
-                                    <p class="card-text">{{ mascota.edad }}</p>
-                                    <a class="btn btn-success w-50" href="{% url 'detalles_mascota' mascota.id %}">Saber
-                                        más</a>
-                                </div>
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
+        <p id="mascotaDesc" class="text-dark-emphasis">{{ mascota.estado_salud }}</p>
     </section>
 
     <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="municipiosModalLabel"
@@ -72,8 +40,7 @@
                 </div>
 
                 <div class="modal-body" id="body">
-                    {{ error }}
-                    <form id="refugioForm" enctype="multipart/form-data"
+                    <form id="mascotaForm" enctype="multipart/form-data"
                           class="container">
 
                         {% csrf_token %}
@@ -88,7 +55,8 @@
 
     <p id="mensaje" class="text-bg-success"></p>
 
-{% endblock content %}
+
+{% endblock %}
 
 {% block scripts %}
     <script>
@@ -117,22 +85,25 @@
             modal.show();
         });
 
-        document.getElementById('refugioForm').addEventListener('submit', async (e) => {
+        document.getElementById('mascotaForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const id = {{ refugio.id }}
+            const id = {{ mascota.id }}
             const msg = document.getElementById('mensaje');
 
             const datos_actualizados = {
                 nombre: document.getElementById('id_nombre').value,
-                direccion: document.getElementById('id_direccion').value,
-                telefono: document.getElementById('id_telefono').value,
-                descripcion: document.getElementById('id_descripcion').value,
-                director: document.getElementById('id_director').value
+                especie: document.getElementById('id_especie').value,
+                edad: document.getElementById('id_edad').value,
+                sexo: document.getElementById('id_sexo').value,
+                tam: document.getElementById('id_tam').value,
+                estado_salud: document.getElementById('id_estado_salud').value,
+                estado: document.getElementById('id_estado').value,
+                refugio: document.getElementById('id_refugio').value,
             }
 
             try {
-                const r = await fetch(`/api/v1/refugios/${id}/`, {
+                const r = await fetch(`/api/v1/mascotas/${id}/`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
@@ -145,14 +116,13 @@
                 if (r.ok) {
                     const data = await r.json();
                     console.log(data);
-                    msg.textContent = "✅ Usuario actualizado correctamente";
-                    document.getElementById('refugioNombre').textContent = data.nombre;
+                    msg.textContent = "✅ Mascota actualizada correctamente";
+                    document.getElementById('mascotaNombre').textContent = data.nombre;
                     const logo = document.getElementById('refugioLogo');
-                    document.getElementById('refugioDesc').textContent = data.descripcion;
+                    document.getElementById('mascotaDesc').textContent = data.estado_salud;
                     modal.hide();
                 } else {
-                    const error = await r.text();
-                    msg.textContent = error;
+                    msg.textContent = await r.text();
                 }
             } catch (e) {
                 console.log(e);
@@ -162,10 +132,10 @@
 
         document.getElementById('btnEliminar').addEventListener('click', async (e) => {
             e.preventDefault()
-            const id = {{ refugio.id }};
+            const id = {{ mascota.id }};
 
             try {
-                const r = await fetch(`/api/v1/refugios/${id}/`, {
+                const r = await fetch(`/api/v1/mascotas/${id}/`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -176,7 +146,7 @@
 
                 if (r.ok) {
 
-                    window.location.href = "{% url 'modulo_refugios' %}";
+                    window.location.href = "{% url 'modulo_refugios'  %}";
                 } else {
                     const error = await r.text();
                     console.log(error)
@@ -187,6 +157,5 @@
             }
 
         })
-
-    </script>`
-{% endblock %}`
+    </script>
+{% endblock %}

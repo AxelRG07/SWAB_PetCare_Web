@@ -27,18 +27,39 @@ class Refugio(models.Model):
     def __str__(self):
         return f"{self.nombre} - Dirigido por {self.director.username}"
 
+class EstadoSalud(models.TextChoices):
+    SANO = 'sano', 'Sano'
+    ENFERMO = 'enfermo', 'Enfermo'
+    RECUPERACION = 'recuperacion', 'Recuperacion'
+
+class Especies(models.TextChoices):
+    PERRO = 'perro', 'Perro'
+    GATO = 'gato', 'Gato'
+    CONEJO = 'conejo', 'Conejo'
+
 class Mascota(models.Model):
     ESTADO_CHOICES = (
         ('disponible', 'Disponible'),
         ('adoptado', 'Adoptado'),
     )
 
+    SEXO_CHOICES = (
+        ('macho', 'Macho'),
+        ('hembra', 'Hembra'),
+    )
+
+    SIZE_CHOICES = (
+        ('grande', 'Grande'),
+        ('mediano', 'Mediano'),
+        ('chico', 'Chico'),
+    )
+
     nombre = models.CharField(max_length=100)
-    especie = models.CharField(max_length=50)
+    especie = models.CharField(max_length=20, choices=Especies, default=Especies.PERRO, blank=True, null=True)
     edad = models.IntegerField()
-    sexo = models.CharField(max_length=10)
-    tamaño = models.CharField(max_length=20)
-    estado_salud = models.TextField()
+    sexo = models.CharField(max_length=10, choices=SEXO_CHOICES, default='macho', blank=True, null=True)
+    tam = models.CharField(max_length=20, choices=SIZE_CHOICES, default='mediano', blank=True, null=True, db_column='tamaño')
+    estado_salud = models.CharField(max_length=20, choices=EstadoSalud, default=EstadoSalud.SANO, blank=True, null=True)
     foto = models.ImageField(upload_to='mascotas/')
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='disponible')
     refugio = models.ForeignKey(Refugio, on_delete=models.CASCADE, related_name='mascotas')
