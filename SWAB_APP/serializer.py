@@ -19,3 +19,8 @@ class RefugioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Refugio
         fields = '__all__'
+
+class MascotaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mascota
+        fields = '__all__'

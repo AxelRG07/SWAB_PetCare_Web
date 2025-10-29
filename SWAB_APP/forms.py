@@ -16,6 +16,22 @@ class RefugioForm(forms.ModelForm):
             'director': forms.Select(attrs={'class':'form-select'}),
         }
 
+class MascotaForm(forms.ModelForm):
+    class Meta:
+        model = Mascota
+        fields = '__all__'
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class':'form-control'}),
+            'especie': forms.TextInput(attrs={'class':'form-control'}),
+            'edad': forms.NumberInput(attrs={'class':'form-control'}),
+            'sexo': forms.Select(attrs={'class':'form-select'}),
+            'tamaño': forms.TextInput(attrs={'class':'form-control'}),
+            'estado_salud': forms.TextInput(attrs={'class':'form-control'}),
+            'foto': forms.FileInput(attrs={'class':'form-control'}),
+            'estado': forms.Select(attrs={'class':'form-select'}),
+            'refugio': forms.Select(attrs={'class':'form-select'}),
+        }
+
 class CustomLoginForm(AuthenticationForm):
     username = forms.CharField(label="Usuario")
     password = forms.CharField(label="Contraseña", widget=forms.PasswordInput)

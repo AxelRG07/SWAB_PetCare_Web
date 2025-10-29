@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.shortcuts import render, redirect, get_object_or_404
 from rest_framework import viewsets
-from .serializer import CustomUserSerializer, RefugioSerializer
+from .serializer import CustomUserSerializer, RefugioSerializer, MascotaSerializer
 from .models import *
 from .forms import *
 from django.contrib.auth import login, logout, authenticate, decorators
@@ -17,6 +17,10 @@ class CustomUserView(viewsets.ModelViewSet):
 class RefugioView(viewsets.ModelViewSet):
     serializer_class = RefugioSerializer
     queryset = Refugio.objects.all()
+
+class MascotaView(viewsets.ModelViewSet):
+    serializer_class = MascotaSerializer
+    queryset = Mascota.objects.all()
 
 @login_required(login_url='signin')
 def registrar_usuario(request):
@@ -47,6 +51,23 @@ def registrar_usuario(request):
 def registrar_refugio(request):
     if request.method == 'GET':
         return render(request, 'registrar_refugio.html', {
+            'form': RefugioForm(),
+        })
+    else:
+        try:
+            form = RefugioForm(request.POST, request.FILES)
+            form.save()
+            return redirect('modulo_refugios')
+        except ValueError:
+            return render(request, 'registrar_refugio.html', {
+                'form': RefugioForm(),
+                'error': 'Datos incorrectos',
+            })
+
+@login_required(login_url='signin')
+def registrar_mascota(request):
+    if request.method == 'GET':
+        return render(request, 'registrar_mascota.html', {
             'form': RefugioForm(),
         })
     else:
