@@ -1,12 +1,24 @@
 {% extends 'base.html' %}
 
-{% block content %}
-    <ul id="ul_usuarios">
 
-    </ul>
+{% block content %}
+    <main class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <h1 class="text-center display-3 py-3">Usuarios registrados</h1>
+                <ul id="ul_usuarios" class="list-group">
+
+                </ul>
+            </div>
+        </div>
+    <a class="btn btn-primary" href="{% url 'registrar_usuario' %}">Nuevo usuario</a>
+    </main>
+
     <p id="error"></p>
 
     <script>
+
+        const loggedType = '{{ u.tipo }}'
 
         function getCookie(name) {
             let cookieValue = null;
@@ -40,19 +52,51 @@
                     const dt = await r.json();
 
                     dt.forEach(user => {
-                        const userHTML = document.createElement('li');
-                        const a = document.createElement('a');
-                        a.textContent = user.username;
-                        a.href = `/detalles/usuario/${user.id}/`;
-                        userHTML.append(a);
-                        console.log(dt);
-                        console.log(a);
+                        debugger;
+                        if (user.tipo !== loggedType) {
+                            const userHTML = document.createElement('li');
+                            userHTML.classList.add('list-group-item');
+                            userHTML.classList.add('d-flex');
+                            userHTML.classList.add('justify-content-center');
+                            userHTML.classList.add('border-0');
+                            userHTML.classList.add('mt-3');
 
-                        lista.appendChild(userHTML);
+                            const card = document.createElement('div');
+                            card.classList.add('card');
+                            card.classList.add('w-50');
+
+                            const cardBody = document.createElement('div');
+                            cardBody.classList.add('card-body');
+                            cardBody.classList.add('text-center');
+
+                            const cardTitle = document.createElement('h3');
+                            cardTitle.textContent = (user.first_name + ' ' + user.last_name).toUpperCase();
+
+                            const cardText = document.createElement('p');
+                            cardText.classList.add('card-text');
+                            cardText.textContent = user.tipo.toUpperCase();
+
+                            const a = document.createElement('a');
+                            a.classList.add('btn');
+                            a.classList.add('btn-success');
+                            a.classList.add('w-50');
+                            a.textContent = 'Ver';
+                            a.href = `/detalles/usuario/${user.id}/`;
+
+                            cardBody.appendChild(cardTitle);
+                            cardBody.appendChild(cardText);
+                            cardBody.appendChild(a);
+
+                            card.appendChild(cardBody);
+
+                            userHTML.append(card);
+                            console.log(dt);
+                            console.log(a);
+
+                            lista.appendChild(userHTML);
+                        }
                     })
                 }
-
-
             } catch (e) {
                 console.log(e);
                 document.getElementById('error').textContent = "error de conexion con el servidor"

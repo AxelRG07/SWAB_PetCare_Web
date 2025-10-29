@@ -1,9 +1,29 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<h2>Iniciar Sesión</h2>
-<form method="POST">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Entrar</button>
-</form>
+
+    <main class="container">
+        <div class="row">
+            <section class="col-md-4 offset-md-4 mt-5">
+                <form method="POST" class="card card-body">
+                    <h1 class="text-center">Signin</h1>
+                    {{ error }}
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Username">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" name="password"
+                               placeholder="Password">
+                    </div>
+
+                    <button class="btn btn-primary ">Login</button>
+                </form>
+            </section>
+        </div>
+    </main>
+
 {% endblock %}

@@ -22,6 +22,7 @@ class Refugio(models.Model):
     telefono = models.CharField(max_length=20)
     descripcion = models.TextField(blank=True)
     director = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='refugios')
+    logo = models.ImageField(upload_to='refugios/', null=True, blank=True)
 
     def __str__(self):
         return f"{self.nombre} - Dirigido por {self.director.username}"

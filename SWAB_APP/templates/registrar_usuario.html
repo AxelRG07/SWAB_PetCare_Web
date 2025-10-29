@@ -1,80 +1,80 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Registro de nuevo usuario</h2>
 
-<form id="formUsuario">
-  <input type="text" id="first_name" placeholder="Nombre" required>
-  <input type="text" id="last_name" placeholder="Apellido" required>
-  <input type="text" id="username" placeholder="Nombre de usuario" required>
-  <input type="password" id="password" placeholder="Contraseña" required>
-  <input type="email" id="email" placeholder="Correo electrónico" required>
+    <main class="container">
+        <div class="row">
+            <div class="col-md-4 offset-md-4">
+                {{ error }}
+                <h2 class="pt-5 text-center">Registro de nuevo usuario</h2>
 
+                <form method="post" action="{% url 'registrar_usuario' %}" class="card card-body">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="first_name" class="form-label">
+                            Nombre
+                        </label>
+                        <input class="form-control" type="text" name="first_name" id="first_name" placeholder="nombre"
+                               required>
+                    </div>
 
-  <select id="tipo">
-    <option value="adoptante">Adoptante</option>
-    <option value="director">Director</option>
-    <option value="admin">Administrador</option>
-  </select>
+                    <div class="mb-3">
+                        <label for="last_name">
+                            Apellido
+                        </label>
+                        <input class="form-control" type="text" name="last_name" id="last_name" placeholder="Apellido"
+                               required>
+                    </div>
 
-  <button type="submit">Registrar</button>
-</form>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">
+                            Usuario
+                        </label>
+                        <input class="form-control" type="text" name="username" id="username" placeholder="Nombre de usuario"
+                               required>
+                    </div>
 
-<p id="mensaje"></p>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">
+                            Correo
+                        </label>
+                        <input class="form-control" type="email" name="email" id="email" placeholder="Correo electrónico"
+                               required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password1" class="form-label">
+                            Contraseña
+                        </label>
+                        <input class="form-control" type="password" name="password1" id="password1" placeholder="contraseña"
+                               required>
+                    </div>
 
-<script>
-function getCookie(name) {
-  let cookieValue = null;
-  if (document.cookie && document.cookie !== "") {
-    const cookies = document.cookie.split(";");
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i].trim();
-      // Does this cookie string begin with the name we want?
-      if (cookie.substring(0, name.length + 1) === (name + "=")) {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
-      }
-    }
-  }
-  return cookieValue;
-}
-document.getElementById('formUsuario').addEventListener('submit', async (e) => {
-  e.preventDefault();
+                    <div class="mb-3">
+                        <label for="password2" class="form-label">
+                            Confirmar Contraseña
+                        </label>
+                        <input class="form-control" type="password" name="password2" id="password2" placeholder="confirma tu contraseña"
+                               required>
+                    </div>
 
-  const usuario = {
-    first_name: document.getElementById('first_name').value,
-    last_name: document.getElementById('last_name').value,
-    username: document.getElementById('username').value,
-    email: document.getElementById('email').value,
-    password: document.getElementById('password').value,
-    tipo: document.getElementById('tipo').value
-  };
+                    <div class="mb-3">
+                        <label for="tipo" class="form-label">
+                            Tipo
+                        </label>
+                        <select id="tipo" name="tipo" class="form-select">
+                            <option value="adoptante">Adoptante</option>
+                            <option value="director">Director</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                    </div>
 
-  try {
-    const respuesta = await fetch('/api/v1/customUsers/', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-          "X-CSRFToken": getCookie("csrftoken"),
+                    <button type="submit" class="btn btn-primary mb-3">Registrar</button>
 
-      },
-      body: JSON.stringify(usuario)
-    });
+                </form>
 
-    const mensaje = document.getElementById('mensaje');
+            </div>
+        </div>
+    </main>
 
-    if (respuesta.ok) {
-      mensaje.textContent = "✅ Usuario registrado correctamente.";
-      mensaje.style.color = "green";
-      e.target.reset();
-    } else {
-      const error = await respuesta.json();
-      mensaje.textContent = "❌ Error al registrar: " + JSON.stringify(error);
-      mensaje.style.color = "red";
-    }
-  } catch (error) {
-    console.error("Error:", error);
-    document.getElementById('mensaje').textContent = "⚠️ Error de conexión con el servidor.";
-  }
-});
-</script>
+    <a href="{% url 'modulo_usuarios' %}" class="btn btn-secondary">Regresar</a>
+
 {% endblock %}

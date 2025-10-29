@@ -2,9 +2,15 @@
 
 {% block nav %}
     {% if user.tipo == "admin" %}
-        <a href="{% url 'modulo_usuarios' %}">Modulo de usuarios</a>
-        <a href="">Modulo de mascotas</a>
-        <a href="">Modulo de refugios</a>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'modulo_usuarios' %}">Modulo de usuarios</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="">Modulo de mascotas</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'modulo_refugios' %}">Modulo de refugios</a>
+        </li>
     {% endif %}
 {% endblock %}
 

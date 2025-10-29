@@ -1,22 +1,20 @@
 # api/forms.py
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import CustomUser
+from .models import *
 
-class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-
+class RefugioForm(forms.ModelForm):
     class Meta:
-        model = CustomUser
-        fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
-
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.tipo = 'adoptante'
-        if commit:
-            user.save()
-        return user
-
+        model = Refugio
+        fields = '__all__'
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class':'form-control'}),
+            'direccion': forms.TextInput(attrs={'class':'form-control'}),
+            'telefono': forms.TextInput(attrs={'class':'form-control'}),
+            'descripcion': forms.Textarea(attrs={'class':'form-control'}),
+            'logo': forms.FileInput(attrs={'class':'form-control'}),
+            'director': forms.Select(attrs={'class':'form-select'}),
+        }
 
 class CustomLoginForm(AuthenticationForm):
     username = forms.CharField(label="Usuario")

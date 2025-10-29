@@ -1,9 +1,51 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<h2>Registro de Usuario</h2>
-<form method="POST">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Registrarse</button>
-</form>
+
+<h1 class="text-center mt-5">Signup</h1>
+
+{{ error }}
+
+    <main class="container">
+        <div class="row">
+            <div class="col-md-4 offset-md-4">
+                <form action="{% url 'signup' %}" method="post" class="card card-body">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="first_name">Nombre</label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" placeholder="">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="last_name">Apellido</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" placeholder="">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="username">Usuario</label>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email">Correo Electrónico:</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="example@gmail.com">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password1">Contraseña</label>
+                        <input type="password" class="form-control" id="password1" name="password1" placeholder="">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password2" class="form-label">Confirma tu contraseña:</label>
+                        <input type="password" class="form-control" id="password2" name="password2" placeholder="">
+                    </div>
+
+                    <button class="btn btn-primary ">Signup</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
 {% endblock %}

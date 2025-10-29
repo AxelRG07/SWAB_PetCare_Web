@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+    <main class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                {% if refugios %}
+                    <h1 class="text-center display-3 py-3">Refugios registrados</h1>
+                {% else %}
+                    <h1 class="text-center display-3 py-3">No hay refugios registrados</h1>
+                {% endif %}
+                <ul class="list-group">
+                    {% for refugio in refugios %}
+                        <li class="list-group-item d-flex justify-content-center border-0 mt-3">
+                            <div class="card w-50">
+                                {% if refugio.logo %}
+                                    <img src="{{ refugio.logo.url }}" class="card-img-top object-fit-containe" alt="{{ refugio.nombre }}">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ refugio.nombre.upper }}</h5>
+                                    <p class="card-text">{{ refugio.direccion }}</p>
+                                    <a class="btn btn-success w-50" href="{% url 'detalles_refugio' refugio.id %}">Saber
+                                        más</a>
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <a class="btn btn-primary" href="{% url 'registrar_refugio' %}">Registrar nuevo refugio</a>
+    </main>
+
+{% endblock %}

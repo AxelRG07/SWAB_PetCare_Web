@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <main class="container d-flex flex-row justify-content-around align-items-center p-5 ">
+        <div class="container w-50 ">
+            <h1 id="refugioNombre" class="display-1  ">{{ refugio.nombre }}</h1>
+        </div>
+        <div class="fab-container">
+            <div class="fab fab-main">
+                <i class="bi bi-plus-lg">+</i>
+            </div>
+            <div class="fab fab-option">
+                <a id="btnEditar" title="Editar Refugio" class="">Editar</a>
+            </div>
+            <div class="fab fab-option">
+                <a id="btnEliminar" title="eliminar">Eliminar</a>
+            </div>
+            <div class="fab fab-option">
+                <a href="/registrar/mascota/" title="Nueva Mascota"><i class=""></i>Agregar mascota</a>
+            </div>
+        </div>
+        <div class="container w-25">
+            {% if refugio.logo %}
+                <img id="refugioLogo" src="{{ refugio.logo.url }}" alt="{{ refugio.nombre }}" class="img-fluid rounded  w-100">
+            {% endif %}
+        </div>
+        =
+    </main>
+
+    <section class="text-center p-5 ">
+        <p id="refugioDesc" class="text-dark-emphasis">{{ refugio.descripcion }}</p>
+    </section>
+
+    <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="municipiosModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Actualizar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body" id="body">
+                    {{ error }}
+                    <form id="refugioForm" enctype="multipart/form-data"
+                          class="container">
+
+                        {% csrf_token %}
+                        {{ form.as_p }}
+
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p id="mensaje" class="text-bg-success"></p>
+
+{% endblock content %}
+
+{% block scripts %}
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const modal = new bootstrap.Modal(document.getElementById('formModal'));
+
+
+        document.getElementById('btnEditar').addEventListener('click', (e) => {
+            e.preventDefault();
+
+            modal.show();
+        });
+
+        document.getElementById('refugioForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = {{ refugio.id }}
+            const msg = document.getElementById('mensaje');
+
+            const datos_actualizados = {
+                nombre: document.getElementById('id_nombre').value,
+                direccion: document.getElementById('id_direccion').value,
+                telefono: document.getElementById('id_telefono').value,
+                descripcion: document.getElementById('id_descripcion').value,
+                director: document.getElementById('id_director').value
+            }
+
+            try {
+                const r = await fetch(`/api/v1/refugios/${id}/`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        "X-CSRFToken": getCookie("csrftoken"),
+                    },
+                    body: JSON.stringify(datos_actualizados)
+                });
+
+                if (r.ok) {
+                    const data = await r.json();
+                    console.log(data);
+                    msg.textContent = "✅ Usuario actualizado correctamente";
+                    document.getElementById('refugioNombre').textContent = data.nombre;
+                    const logo = document.getElementById('refugioLogo');
+                    document.getElementById('refugioDesc').textContent = data.descripcion;
+                    modal.hide();
+                } else {
+                    const error = await r.text();
+                    msg.textContent = error;
+                }
+            } catch (e) {
+                console.log(e);
+                document.getElementById('mensaje').textContent = "⚠️ Error de conexión con el servidor.";
+            }
+        })
+
+        document.getElementById('btnEliminar').addEventListener('click', async (e) => {
+            e.preventDefault()
+            const id = {{ refugio.id }};
+
+            try {
+                const r = await fetch(`/api/v1/refugios/${id}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        "X-CSRFToken": getCookie("csrftoken"),
+                    }
+                })
+
+                if (r.ok) {
+
+                    window.location.href = "{% url 'modulo_refugios' %}";
+                } else {
+                    const error = await r.text();
+                    console.log(error)
+                }
+            } catch (e) {
+                console.error(e);
+                document.getElementById('mensaje').textContent = "⚠️ Error de conexión con el servidor.";
+            }
+
+        })
+
+    </script>`
+{% endblock %}`
