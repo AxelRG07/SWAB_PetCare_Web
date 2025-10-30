@@ -3,7 +3,7 @@
 
 {% block content %}
 
-    <main class="container">
+    <main class="container ">
         <div class="row">
             <div class="col-md-6 offset-md-3">
                 {% if refugios %}
@@ -16,7 +16,8 @@
                         <li class="list-group-item d-flex justify-content-center border-0 mt-3">
                             <div class="card w-50">
                                 {% if refugio.logo %}
-                                    <img src="{{ refugio.logo.url }}" class="card-img-top object-fit-containe" alt="{{ refugio.nombre }}">
+                                    <img src="{{ refugio.logo.url }}" class="card-img-top object-fit-containe"
+                                         alt="{{ refugio.nombre }}">
                                 {% endif %}
                                 <div class="card-body">
                                     <h5 class="card-title">{{ refugio.nombre.upper }}</h5>
@@ -30,7 +31,9 @@
                 </ul>
             </div>
         </div>
-        <a class="btn btn-primary" href="{% url 'registrar_refugio' %}">Registrar nuevo refugio</a>
+        {% if user.tipo == 'admin' %}
+            <a class="btn btn-primary" href="{% url 'registrar_refugio' %}">Registrar nuevo refugio</a>
+        {% endif %}
     </main>
 
 {% endblock %}

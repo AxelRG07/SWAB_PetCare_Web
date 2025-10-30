@@ -5,20 +5,22 @@
         <div class="container w-50 ">
             <h1 id="refugioNombre" class="display-1  ">{{ refugio.nombre }}</h1>
         </div>
-        <div class="fab-container">
-            <div class="fab fab-main">
-                <i class="bi bi-plus-lg">+</i>
+        {% if usuario.tipo == 'admin' %}
+            <div class="fab-container">
+                <div class="fab fab-main">
+                    <i class="bi bi-plus-lg">+</i>
+                </div>
+                <div class="fab fab-option">
+                    <a id="btnEditar" title="Editar Refugio" class="">Editar</a>
+                </div>
+                <div class="fab fab-option">
+                    <a id="btnEliminar" title="eliminar">Eliminar</a>
+                </div>
+                <div class="fab fab-option">
+                    <a href="{% url 'registrar_mascota' refugio.id %}" title="Nueva Mascota">Agregar mascota</a>
+                </div>
             </div>
-            <div class="fab fab-option">
-                <a id="btnEditar" title="Editar Refugio" class="">Editar</a>
-            </div>
-            <div class="fab fab-option">
-                <a id="btnEliminar" title="eliminar">Eliminar</a>
-            </div>
-            <div class="fab fab-option">
-                <a href="{% url 'registrar_mascota' refugio.id %}" title="Nueva Mascota">Agregar mascota</a>
-            </div>
-        </div>
+        {% endif %}
         <div class="container w-25">
             {% if refugio.logo %}
                 <img id="refugioLogo" src="{{ refugio.logo.url }}" alt="{{ refugio.nombre }}"

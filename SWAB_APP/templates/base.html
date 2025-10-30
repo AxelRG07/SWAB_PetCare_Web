@@ -21,6 +21,9 @@
                 {% block nav %}
 
                 {% endblock %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'modulo_refugios' %}">Refugios</a>
+                </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'signout' %}">Cerrar sesión</a>
@@ -43,10 +46,16 @@
 
 {% endblock %}
 
+<footer class="bg-white text-dark-emphasis text-center py-3 mt-4">
+    © 2025 SWAB PetCare | Todos los derechos reservados
+</footer>
+
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 
 {% block scripts %}
 
 {% endblock %}
+
+
 </body>
 </html>

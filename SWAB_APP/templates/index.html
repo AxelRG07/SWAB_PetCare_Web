@@ -6,15 +6,128 @@
             <a class="nav-link" href="{% url 'modulo_usuarios' %}">Modulo de usuarios</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="">Modulo de mascotas</a>
-        </li>
-        <li class="nav-item">
             <a class="nav-link" href="{% url 'modulo_refugios' %}">Modulo de refugios</a>
         </li>
     {% endif %}
 {% endblock %}
 
 {% block content %}
-    <h2>Pagina de inicio</h2>
-    {{ user.tipo }}
+    <main class="container d-flex flex-row justify-content-around align-items-center p-5 ">
+        <div class="container w-25">
+            <h1 id="Swab" class="display-1 fw-semibold">SWAB</h1>
+            <h2 id="Swab" class="display-5 ">PetCare</h2>
+        </div>
+        <div class="container w-50">
+            <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="/media/ci-1.png" class="d-block w-100 rounded-5" alt="...">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="/media/ci-2.png" class="d-block w-100 rounded-5" alt="...">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="/media/ci-3.png" class="d-block w-100 rounded-5" alt="...">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section class="text-center pt-5 container">
+        <p id="mascotaDesc" class="text-dark-emphasis">Aseguramos el bienestar Animal mediante
+            este sitio, brindando un sistema centralizado para que las mascotas lleguen a dueños
+            responsables</p>
+    </section>
+
+    <section class="p-5 container">
+        <h1 class="mt-lg-5">Por que usar SWAB PetCare</h1>
+        <p id="mascotaDesc" class="text-dark-emphasis mt-2">Aseguramos el bienestar Animal mediante
+            este sitio, brindando un sistema centralizado para que las mascotas lleguen a dueños
+            responsables</p>
+        <div class="container d-flex justify-content-center flex-column align-items-center">
+            <div class="row row-cols-2 row-cols-md-4 g-3 mt-md-3">
+                <div class="col"><img src="/media/mascotas/batman-minimalist.jpg" class="img-fluid rounded shadow"
+                                      alt="Mascota 1"></div>
+                <div class="col"><img src="/media/mascotas/batman-minimalist.jpg" class="img-fluid rounded shadow"
+                                      alt="Mascota 2"></div>
+                <div class="col"><img src="/media/mascotas/batman-minimalist.jpg" class="img-fluid rounded shadow"
+                                      alt="Mascota 3"></div>
+                <div class="col"><img src="/media/mascotas/batman-minimalist.jpg" class="img-fluid rounded shadow"
+                                      alt="Mascota 4"></div>
+            </div>
+            <button class="btn btn-primary mt-5 w-25 p-1">Conocer mas</button>
+        </div>
+
+    </section>
+
+    <section class="container d-flex flex-column justify-content-center align-items-center p-5">
+        <div class="container w-25">
+            <h1 id="Swab" class="display-1 fw-semibold">QUE</h1>
+            <h3>HACEMOS</h3>
+            <div class="container">
+
+            </div>
+        </div>
+
+        <div class="container w-75">
+            <form class="card card-body p-5 bg-light bg-body-secondary">
+                <h2>Sugerencias</h2>
+                <div class="mb-3">
+                    <label for="nombre" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="nombre">
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">Enviar</button>
+            </form>
+        </div>
+    </section>
+
+    <section class="container p-5 text-center d-flex flex-column align-items-center justify-content-center">
+        <h1 class="py-2">Refugios</h1>
+        <h2 class="py-2">Algunas de las instituciones registradas en nuestro sitio</h2>
+        <div id="carouselExampleCaptions" class="carousel slide w-75">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
+                        aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1"
+                        aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2"
+                        aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="/media/mascotas/batman-minimalist.jpg" class="d-block w-100 rounded-5" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>First slide label</h5>
+                        <p>Some representative placeholder content for the first slide.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="/media/mascotas/batman-minimalist.jpg" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Second slide label</h5>
+                        <p>Some representative placeholder content for the second slide.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="/media/mascotas/batman-minimalist.jpg" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Third slide label</h5>
+                        <p>Some representative placeholder content for the third slide.</p>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
+                    data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"
+                    data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </section>
+
 {% endblock %}

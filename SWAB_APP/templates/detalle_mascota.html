@@ -2,32 +2,38 @@
 
 {% block content %}
 
-    <main class="container d-flex flex-row justify-content-around align-items-center p-5 ">
+    <main class="container d-flex flex-row justify-content-sm-evenly align-items-center p-5 ">
         <div class="container w-50 ">
-            <h1 id="mascotaNombre" class="display-1  ">{{ mascota.nombre }}</h1>
+            <h1 class="fw-semibold display-1">Conoce a</h1>
+            <h2 id="mascotaNombre" class="display-3  ">{{ mascota.nombre }}</h2>
         </div>
-        <div class="fab-container">
-            <div class="fab fab-main">
-                <i class="bi bi-plus-lg">+</i>
+        {% if usuario.tipo == 'admin' %}
+            <div class="fab-container">
+                <div class="fab fab-main">
+                    <i class="bi bi-plus-lg">+</i>
+                </div>
+                <div class="fab fab-option">
+                    <a id="btnEditar" title="Editar Mascota" class="">Editar</a>
+                </div>
+                <div class="fab fab-option">
+                    <a id="btnEliminar" title="eliminar">Eliminar</a>
+                </div>
             </div>
-            <div class="fab fab-option">
-                <a id="btnEditar" title="Editar Mascota" class="">Editar</a>
-            </div>
-            <div class="fab fab-option">
-                <a id="btnEliminar" title="eliminar">Eliminar</a>
-            </div>
-        </div>
+        {% endif %}
         <div class="container w-25">
             {% if mascota.foto %}
                 <img id="mascotaFoto" src="{{ mascota.foto.url }}" alt="{{ mascota.nombre }}"
-                     class="img-fluid rounded  w-100">
+                     class="img-responsive rounded w-100 rounded-5">
             {% endif %}
         </div>
     </main>
 
     <section class="text-center p-5 container">
         <p id="mascotaDesc" class="text-dark-emphasis">{{ mascota.estado_salud }}</p>
+        <a class="btn btn-secondary" href="{% url 'modulo_refugios' %}">Regresar</a>
     </section>
+
+
 
     <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="municipiosModalLabel"
          aria-hidden="true">

@@ -107,7 +107,6 @@ def signup_view(request):
         })
     return render(request, 'signup.html')
 
-@login_required(login_url='signin')
 def signin_view(request):
     if request.method == 'POST':
         user = authenticate(
@@ -152,7 +151,6 @@ def detalles_usuario(request, id_usuario):
             'usuario': usuario,
         })
 
-@login_required(login_url='signin')
 def modulo_refugios(request):
     refugios = Refugio.objects.all()
     return render(request, 'modulo_refugios.html', {
@@ -161,7 +159,6 @@ def modulo_refugios(request):
     })
 
 
-@login_required(login_url='signin')
 def detalles_refugio(request, id_refugio):
     if request.method == 'GET':
         refugio = get_object_or_404(Refugio, id=id_refugio)
@@ -174,8 +171,6 @@ def detalles_refugio(request, id_refugio):
             'mascotas': mascotas,
         })
 
-
-@login_required(login_url='signin')
 def detalles_mascota(request, id_mascota):
     if request.method == 'GET':
         mascota = get_object_or_404(Mascota, id=id_mascota)
