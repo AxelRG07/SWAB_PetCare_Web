@@ -2,6 +2,7 @@ from idlelib.rpc import request_queue
 
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from rest_framework import viewsets
 from .serializer import CustomUserSerializer, RefugioSerializer, MascotaSerializer
@@ -9,18 +10,22 @@ from .models import *
 from .forms import *
 from django.contrib.auth import login, logout, authenticate, decorators
 
+
 # Create your views here.
 class CustomUserView(viewsets.ModelViewSet):
     serializer_class = CustomUserSerializer
     queryset = CustomUser.objects.all()
 
+
 class RefugioView(viewsets.ModelViewSet):
     serializer_class = RefugioSerializer
     queryset = Refugio.objects.all()
 
+
 class MascotaView(viewsets.ModelViewSet):
     serializer_class = MascotaSerializer
     queryset = Mascota.objects.all()
+
 
 @login_required(login_url='signin')
 def registrar_usuario(request):
@@ -47,6 +52,7 @@ def registrar_usuario(request):
 
     return render(request, 'registrar_usuario.html')
 
+
 @login_required(login_url='signin')
 def registrar_refugio(request):
     if request.method == 'GET':
@@ -63,6 +69,7 @@ def registrar_refugio(request):
                 'form': RefugioForm(),
                 'error': 'Datos incorrectos',
             })
+
 
 @login_required(login_url='signin')
 def registrar_mascota(request, id_refugio):
@@ -83,6 +90,7 @@ def registrar_mascota(request, id_refugio):
                 'form': MascotaForm(),
                 'error': 'Datos incorrectos',
             })
+
 
 def signup_view(request):
     if request.method == 'POST':
@@ -107,12 +115,13 @@ def signup_view(request):
         })
     return render(request, 'signup.html')
 
+
 def signin_view(request):
     if request.method == 'POST':
         user = authenticate(
-            request = request,
-            username = request.POST['username'],
-            password = request.POST['password']
+            request=request,
+            username=request.POST['username'],
+            password=request.POST['password']
         )
 
         if user is None:
@@ -126,21 +135,25 @@ def signin_view(request):
         form = CustomLoginForm()
     return render(request, 'signin.html', {'form': form})
 
+
 @login_required(login_url='signin')
 def signout_view(request):
     logout(request)
     return redirect('index')
+
 
 def index(request):
     return render(request, 'index.html', {
         'user': request.user
     })
 
+
 @login_required(login_url='signin')
 def modulo_usuarios(request):
     return render(request, 'modulo_usuarios.html', {
         'u': request.user
     })
+
 
 @login_required(login_url='signin')
 def detalles_usuario(request, id_usuario):
@@ -150,6 +163,7 @@ def detalles_usuario(request, id_usuario):
         return render(request, 'detalle_usuario.html', {
             'usuario': usuario,
         })
+
 
 def modulo_refugios(request):
     refugios = Refugio.objects.all()
@@ -171,6 +185,7 @@ def detalles_refugio(request, id_refugio):
             'mascotas': mascotas,
         })
 
+
 def detalles_mascota(request, id_mascota):
     if request.method == 'GET':
         mascota = get_object_or_404(Mascota, id=id_mascota)
@@ -180,3 +195,30 @@ def detalles_mascota(request, id_mascota):
             'form': form,
             'mascota': mascota,
         })
+
+
+def filtrar_usuarios(request):
+    tipo = request.GET.get('tipo')
+    if not tipo:
+        return JsonResponse({'error': 'No se proporcionó tipo'}, status=400)
+
+    usuarios = CustomUser.objects.filter(tipo=tipo).values('id', 'first_name', 'last_name', 'email', 'tipo')
+    return JsonResponse(list(usuarios), safe=False)
+
+
+def filtrar_refugios(request):
+    id_usuario = request.GET.get('id_usuario')
+    if not id_usuario:
+        return JsonResponse({'error': 'No se proporcionó usuario'}, status=400)
+
+    try:
+        refugio = Refugio.objects.get(director_id=id_usuario)
+        data = {
+            'id': refugio.id,
+            'nombre': refugio.nombre,
+            'direccion': refugio.direccion,
+        }
+        return JsonResponse(data, safe=False)
+
+    except Refugio.DoesNotExist:
+        return JsonResponse({'mensaje': 'No se encontró refugio asociado'}, status=404)

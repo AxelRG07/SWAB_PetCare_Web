@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework import routers
 from .views import *
 
-#api versioning
+# api versioning
 router = routers.DefaultRouter()
 router.register(r'customUsers', CustomUserView, 'customUsers')
 router.register(r'refugios', RefugioView, 'refugios')
@@ -14,7 +14,8 @@ urlpatterns = [
     path('registrar/usuario/', registrar_usuario, name='registrar_usuario'),
     path('registrar/refugio/', registrar_refugio, name='registrar_refugio'),
     path('registrar/mascota/<int:id_refugio>', registrar_mascota, name='registrar_mascota'),
-
+    path('filtrar_usuarios/', filtrar_usuarios, name='filtrar_usuarios'),
+    path('filtrar_refugios/', filtrar_refugios, name='filtrar_refugios'),
     path('detalles/usuario/<int:id_usuario>/', detalles_usuario, name='detalles_usuario'),
     path('detalles/refugio/<int:id_refugio>/', detalles_refugio, name='detalles_refugio'),
     path('detalles/mascota/<int:id_mascota>/', detalles_mascota, name='detalles_mascota'),

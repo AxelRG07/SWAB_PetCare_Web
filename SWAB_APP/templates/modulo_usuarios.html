@@ -11,7 +11,12 @@
                 </ul>
             </div>
         </div>
-    <a class="btn btn-primary" href="{% url 'registrar_usuario' %}">Nuevo usuario</a>
+        <a class="btn btn-primary" href="{% url 'registrar_usuario' %}">Nuevo usuario</a>
+        <select id="filtrarUsuarios" class="form-select">
+            <option value="">Filtrar por tipo...</option>
+            <option value="adoptante">Adoptante</option>
+            <option value="director">Director</option>
+        </select>
     </main>
 
     <p id="error"></p>
@@ -36,6 +41,49 @@
             return cookieValue;
         }
 
+        function userCard(user, lista, refugio) {
+            const userHTML = document.createElement('li');
+            userHTML.classList.add('list-group-item');
+            userHTML.classList.add('d-flex');
+            userHTML.classList.add('justify-content-center');
+            userHTML.classList.add('border-0');
+            userHTML.classList.add('mt-3');
+
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.classList.add('w-50');
+
+            const cardBody = document.createElement('div');
+            cardBody.classList.add('card-body');
+            cardBody.classList.add('text-center');
+
+            const cardTitle = document.createElement('h3');
+            cardTitle.textContent = (user.first_name + ' ' + user.last_name).toUpperCase();
+
+            const cardText = document.createElement('p');
+            cardText.classList.add('card-text');
+            cardText.textContent = (user.tipo.toUpperCase() + " - " + refugio.nombre);
+
+            const a = document.createElement('a');
+            a.classList.add('btn');
+            a.classList.add('btn-success');
+            a.classList.add('w-50');
+            a.textContent = 'Ver';
+            a.href = `/detalles/usuario/${user.id}/`;
+
+            cardBody.appendChild(cardTitle);
+            cardBody.appendChild(cardText);
+            cardBody.appendChild(a);
+
+            card.appendChild(cardBody);
+
+            userHTML.append(card);
+
+            lista.appendChild(userHTML);
+        }
+
+        const lista = document.getElementById('ul_usuarios');
+
         const getUsuarios = async () => {
             try {
                 const r = await fetch('/api/v1/customUsers/', {
@@ -45,57 +93,35 @@
                     },
                 });
 
-                const lista = document.getElementById('ul_usuarios');
+                const urlFiltrarRefugios = "{% url 'filtrar_refugios' %}";
+
                 lista.innerHTML = '';
 
                 if (r.ok) {
                     const dt = await r.json();
+                    debugger;
 
-                    dt.forEach(user => {
-                        debugger;
+                    for (const user of dt) {
                         if (user.tipo !== loggedType) {
-                            const userHTML = document.createElement('li');
-                            userHTML.classList.add('list-group-item');
-                            userHTML.classList.add('d-flex');
-                            userHTML.classList.add('justify-content-center');
-                            userHTML.classList.add('border-0');
-                            userHTML.classList.add('mt-3');
+                            let refugioData = null;
 
-                            const card = document.createElement('div');
-                            card.classList.add('card');
-                            card.classList.add('w-50');
+                            if (user.tipo === 'director') {
+                                try {
+                                    const resRefugio = await fetch(`${urlFiltrarRefugios}?id_usuario=${user.id}`)
+                                    if (resRefugio.ok) refugioData = await resRefugio.json();
 
-                            const cardBody = document.createElement('div');
-                            cardBody.classList.add('card-body');
-                            cardBody.classList.add('text-center');
+                                } catch (e) {
+                                    console.error("Error obteniendo refugio: ", e);
+                                }
+                            } else {
+                                refugioData = {
+                                    nombre: '-'
+                                }
+                            }
 
-                            const cardTitle = document.createElement('h3');
-                            cardTitle.textContent = (user.first_name + ' ' + user.last_name).toUpperCase();
-
-                            const cardText = document.createElement('p');
-                            cardText.classList.add('card-text');
-                            cardText.textContent = user.tipo.toUpperCase();
-
-                            const a = document.createElement('a');
-                            a.classList.add('btn');
-                            a.classList.add('btn-success');
-                            a.classList.add('w-50');
-                            a.textContent = 'Ver';
-                            a.href = `/detalles/usuario/${user.id}/`;
-
-                            cardBody.appendChild(cardTitle);
-                            cardBody.appendChild(cardText);
-                            cardBody.appendChild(a);
-
-                            card.appendChild(cardBody);
-
-                            userHTML.append(card);
-                            console.log(dt);
-                            console.log(a);
-
-                            lista.appendChild(userHTML);
+                            userCard(user, lista, refugioData);
                         }
-                    })
+                    }
                 }
             } catch (e) {
                 console.log(e);
@@ -103,8 +129,39 @@
             }
         }
 
+
         document.addEventListener('DOMContentLoaded', () => {
             getUsuarios();
+            const selectTipo = document.getElementById('filtrarUsuarios');
+
+            const urlFiltrar = "{% url 'filtrar_usuarios' %}";
+
+            selectTipo.addEventListener('change', async () => {
+                const tipo = selectTipo.value;
+                console.log(tipo)
+                if (!tipo) return;
+
+                try {
+                    const r = await fetch(`${urlFiltrar}?tipo=${tipo}`)
+
+                    if (!r.ok) {
+                        throw new Error(`Error HTTP: ${r.status}`);
+                    }
+
+                    const data = await r.json();
+
+                    lista.innerHTML = '';
+
+                    data.forEach(user => {
+                        userCard(user, lista)
+                    })
+
+                } catch (e) {
+                    console.log(e);
+                    document.getElementById('error').textContent = "error de conexion con el servidor"
+                }
+
+            });
         })
     </script>
 {% endblock %}
