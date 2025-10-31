@@ -15,12 +15,15 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
-class RefugioSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Refugio
-        fields = '__all__'
-
 class MascotaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mascota
         fields = '__all__'
+
+class RefugioSerializer(serializers.ModelSerializer):
+    mascotas = MascotaSerializer(many=True, read_only=True)
+    class Meta:
+        model = Refugio
+        fields = '__all__'
+
+

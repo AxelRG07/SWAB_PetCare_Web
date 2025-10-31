@@ -84,7 +84,7 @@ def registrar_mascota(request, id_refugio):
             form = MascotaForm(request.POST, request.FILES)
             form.refugio = Refugio.objects.get(id=id_refugio)
             form.save()
-            return redirect(f'detalles/refugio/{id_refugio}/')
+            return redirect(f'/detalles/refugio/{id_refugio}/')
         except ValueError:
             return render(request, 'registrar_mascota.html', {
                 'form': MascotaForm(),

@@ -41,23 +41,8 @@
                 {% else %}
                     <h1 class="text-center display-3 py-3">No hay mascotas registradas</h1>
                 {% endif %}
-                <ul class="list-group">
-                    {% for mascota in mascotas %}
-                        <li class="list-group-item d-flex justify-content-center border-0 mt-3">
-                            <div class="card w-50">
-                                {% if mascota.foto %}
-                                    <img src="{{ mascota.foto.url }}" class="card-img-top object-fit-container"
-                                         alt="{{ mascota.nombre }}">
-                                {% endif %}
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ mascota.nombre.upper }}</h5>
-                                    <p class="card-text">{{ mascota.edad }}</p>
-                                    <a class="btn btn-success w-50" href="{% url 'detalles_mascota' mascota.id %}">Saber
-                                        más</a>
-                                </div>
-                            </div>
-                        </li>
-                    {% endfor %}
+                <ul id="listaMascotas" class="list-group">
+
                 </ul>
             </div>
         </div>
@@ -109,6 +94,78 @@
             }
             return cookieValue;
         }
+
+        function mascotaCard(mascota, lista) {
+            const userHTML = document.createElement('li');
+            userHTML.classList.add('list-group-item');
+            userHTML.classList.add('d-flex');
+            userHTML.classList.add('justify-content-center');
+            userHTML.classList.add('border-0');
+            userHTML.classList.add('mt-3');
+
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.classList.add('w-50');
+
+            const cardBody = document.createElement('div');
+            cardBody.classList.add('card-body');
+            cardBody.classList.add('text-center');
+
+            const cardTitle = document.createElement('h3');
+            cardTitle.textContent = (mascota.nombre).toUpperCase();
+
+            const cardText = document.createElement('p');
+            cardText.classList.add('card-text');
+            cardText.textContent = (mascota.estado_salud);
+
+            const a = document.createElement('a');
+            a.classList.add('btn');
+            a.classList.add('btn-success');
+            a.classList.add('w-50');
+            a.textContent = 'Ver';
+            a.href = `/detalles/mascota/${mascota.id}/`;
+
+            cardBody.appendChild(cardTitle);
+            cardBody.appendChild(cardText);
+            cardBody.appendChild(a);
+
+            card.appendChild(cardBody);
+
+            userHTML.append(card);
+
+            lista.appendChild(userHTML);
+        }
+
+        const listaMascotas = document.getElementById('listaMascotas');
+        const idRefugio = {{ refugio.id }};
+
+        const obtenerReugios = async () => {
+            try {
+                const r = await fetch(`/api/v1/refugios/${idRefugio}`)
+
+                if (!r.ok) {
+                    throw new Error(r.message)
+                }
+
+                const refugio = await r.json();
+
+                if (refugio.mascotas.length === 0) {
+                    const li = document.createElement('li');
+                    li.textContent = "Sin mascotas registradas.";
+                    listaMascotas.appendChild(li);
+                } else {
+                    refugio.mascotas.forEach(mascota => {
+                        mascotaCard(mascota, listaMascotas);
+                    })
+                }
+
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', obtenerReugios);
+
 
         const modal = new bootstrap.Modal(document.getElementById('formModal'));
 
