@@ -152,8 +152,12 @@
 
                     lista.innerHTML = '';
 
+                    const refugioData = {
+                        nombre: '-'
+                    }
+
                     data.forEach(user => {
-                        userCard(user, lista)
+                        userCard(user, lista, refugioData)
                     })
 
                 } catch (e) {
@@ -165,4 +169,3 @@
         })
     </script>
 {% endblock %}
-

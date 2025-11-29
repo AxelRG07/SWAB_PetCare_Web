@@ -139,7 +139,7 @@
         const listaMascotas = document.getElementById('listaMascotas');
         const idRefugio = {{ refugio.id }};
 
-        const obtenerReugios = async () => {
+        const obtenerRefugios = async () => {
             try {
                 const r = await fetch(`/api/v1/refugios/${idRefugio}`)
 
@@ -164,7 +164,7 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', obtenerReugios);
+        document.addEventListener('DOMContentLoaded', obtenerRefugios);
 
 
         const modal = new bootstrap.Modal(document.getElementById('formModal'));

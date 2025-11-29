@@ -150,9 +150,13 @@ def index(request):
 
 @login_required(login_url='signin')
 def modulo_usuarios(request):
-    return render(request, 'modulo_usuarios.html', {
-        'u': request.user
-    })
+    user = request.user
+    if user.tipo == 'admin':
+        return render(request, 'modulo_usuarios.html', {
+            'u': request.user
+        })
+
+    return redirect('index')
 
 
 @login_required(login_url='signin')
