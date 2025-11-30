@@ -10,8 +10,6 @@ from .models import *
 from .forms import *
 from django.contrib.auth import login, logout, authenticate, decorators
 
-
-# Create your views here.
 class CustomUserView(viewsets.ModelViewSet):
     serializer_class = CustomUserSerializer
     queryset = CustomUser.objects.all()
@@ -30,66 +28,78 @@ class MascotaView(viewsets.ModelViewSet):
 @login_required(login_url='signin')
 def registrar_usuario(request):
     if request.method == 'POST':
-        if request.POST['password1'] == request.POST['password2']:
+        pass1 = request.POST.get('password1')
+        pass2 = request.POST.get('password2')
+        
+        if pass1 == pass2:
             try:
-                usuario = CustomUser.objects.create_user(
-                    first_name=request.POST['first_name'],
-                    last_name=request.POST['last_name'],
-                    username=request.POST['username'],
-                    email=request.POST['email'],
-                    password=request.POST['password1'],
-                    tipo=request.POST['tipo']
+                CustomUser.objects.create_user(
+                    first_name=request.POST.get('first_name'),
+                    last_name=request.POST.get('last_name'),
+                    username=request.POST.get('username'),
+                    email=request.POST.get('email'),
+                    password=pass1,
+                    tipo=request.POST.get('tipo')
                 )
-                usuario.save()
                 return redirect('modulo_usuarios')
+            
             except IntegrityError:
                 return render(request, 'registrar_usuario.html', {
-                    'error': 'error al registrar usuario',
+                    'error': 'El nombre de usuario o correo ya existe.',
+                    'old_data': request.POST 
                 })
-        return render(request, 'registrar_usuario.html', {
-            'error': 'Las contraseñas no coinciden',
-        })
+        else:
+            return render(request, 'registrar_usuario.html', {
+                'error': 'Las contraseñas no coinciden',
+                'old_data': request.POST
+            })
 
     return render(request, 'registrar_usuario.html')
 
 
 @login_required(login_url='signin')
 def registrar_refugio(request):
-    if request.method == 'GET':
-        return render(request, 'registrar_refugio.html', {
-            'form': RefugioForm(),
-        })
-    else:
-        try:
-            form = RefugioForm(request.POST, request.FILES)
+    if request.method == 'POST':
+        form = RefugioForm(request.POST, request.FILES)
+        
+        if form.is_valid():
             form.save()
             return redirect('modulo_refugios')
-        except ValueError:
+        else:
             return render(request, 'registrar_refugio.html', {
-                'form': RefugioForm(),
-                'error': 'Datos incorrectos',
+                'form': form, 
+                'error': 'Por favor corrige los errores señalados abajo.'
             })
+    else:
+        form = RefugioForm()
+
+    return render(request, 'registrar_refugio.html', {
+        'form': form,
+    })
 
 
 @login_required(login_url='signin')
 def registrar_mascota(request, id_refugio):
-    if request.method == 'GET':
-        refugio = Refugio.objects.get(id=id_refugio)
+    refugio = Refugio.objects.get_object_or_404(id=id_refugio)
+
+    if request.method == 'POST':
+        form = MascotaForm(request.POST, request.FILES)
+        if form.is_valid():
+            mascota = form.save(commit=False)
+            mascota.refugio = refugio
+            mascota.save()
+            return redirect(f'/detalles/refugio/{id_refugio}/')
+        else:
+            return render(request, 'registrar_mascota.html', {
+                'form': form,
+                'refugio': refugio,
+                'error': 'Datos incorrectos, revisa los campos.'
+            })
+    else:
         return render(request, 'registrar_mascota.html', {
             'form': MascotaForm(),
             'refugio': refugio,
         })
-    else:
-        try:
-            form = MascotaForm(request.POST, request.FILES)
-            form.refugio = Refugio.objects.get(id=id_refugio)
-            form.save()
-            return redirect(f'/detalles/refugio/{id_refugio}/')
-        except ValueError:
-            return render(request, 'registrar_mascota.html', {
-                'form': MascotaForm(),
-                'error': 'Datos incorrectos',
-            })
 
 
 def signup_view(request):
