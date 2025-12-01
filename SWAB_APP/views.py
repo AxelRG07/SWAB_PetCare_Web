@@ -11,20 +11,27 @@ from .forms import *
 from django.contrib.auth import login, logout, authenticate, decorators
 from django.db import transaction
 from .decorators import grupo_requerido
+from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 
 class CustomUserView(viewsets.ModelViewSet):
     serializer_class = CustomUserSerializer
     queryset = CustomUser.objects.all()
+    
+    permission_classes = [IsAuthenticated, DjangoModelPermissions]
 
 
 class RefugioView(viewsets.ModelViewSet):
     serializer_class = RefugioSerializer
     queryset = Refugio.objects.all()
+    
+    permission_classes = [IsAuthenticated, DjangoModelPermissions]
 
 
 class MascotaView(viewsets.ModelViewSet):
     serializer_class = MascotaSerializer
     queryset = Mascota.objects.all()
+    
+    permission_classes = [IsAuthenticated, DjangoModelPermissions]
 
 
 @grupo_requerido('Administrador')
