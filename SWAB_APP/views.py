@@ -9,6 +9,8 @@ from .serializer import CustomUserSerializer, RefugioSerializer, MascotaSerializ
 from .models import *
 from .forms import *
 from django.contrib.auth import login, logout, authenticate, decorators
+from django.db import transaction
+from .decorators import grupo_requerido
 
 class CustomUserView(viewsets.ModelViewSet):
     serializer_class = CustomUserSerializer
@@ -33,15 +35,32 @@ def registrar_usuario(request):
         
         if pass1 == pass2:
             try:
-                CustomUser.objects.create_user(
-                    first_name=request.POST.get('first_name'),
-                    last_name=request.POST.get('last_name'),
-                    username=request.POST.get('username'),
-                    email=request.POST.get('email'),
-                    password=pass1,
-                    tipo=request.POST.get('tipo')
-                )
-                return redirect('modulo_usuarios')
+                # Usamos atomic para asegurar que se crea el usuario Y se asigna el grupo
+                with transaction.atomic():
+                    usuario = CustomUser.objects.create_user(
+                        first_name=request.POST.get('first_name'),
+                        last_name=request.POST.get('last_name'),
+                        username=request.POST.get('username'),
+                        email=request.POST.get('email'),
+                        password=pass1,
+                        tipo=''
+                    )
+                    
+                    tipo_seleccionado = request.POST.get('tipo')
+                    
+                    if tipo_seleccionado == 'admin':
+                        grupo = Group.objects.get(name='Administrador')
+                    elif tipo_seleccionado == 'director':
+                        grupo = Group.objects.get(name='Director')
+                    else:
+                        grupo = Group.objects.get(name='Adoptante')
+                    
+                    usuario.groups.add(grupo)
+                    
+                    return redirect('modulo_usuarios')
+                
+            except Group.DoesNotExist:
+                return render(request, 'registrar_usuario.html', {'error': 'El rol seleccionado no existe en el sistema'})
             
             except IntegrityError:
                 return render(request, 'registrar_usuario.html', {
@@ -158,15 +177,9 @@ def index(request):
     })
 
 
-@login_required(login_url='signin')
+@grupo_requerido('Administrador')
 def modulo_usuarios(request):
-    user = request.user
-    if user.tipo == 'admin':
-        return render(request, 'modulo_usuarios.html', {
-            'u': request.user
-        })
-
-    return redirect('index')
+    return render(request, 'modulo_usuarios.html', {'u': request.user})
 
 
 @login_required(login_url='signin')

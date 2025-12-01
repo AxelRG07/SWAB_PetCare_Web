@@ -60,7 +60,8 @@
 
                 </form>
 
-                <button id="btnEliminar" class="btn btn-danger mb-3">Delete</button>
+                <button id="btnEliminar" class="btn btn-danger mb-3">Eliminar</button>
+
                 <button class="btn btn-success mb-3"><a class="nav-link" href="{% url 'modulo_usuarios' %}">Hecho</a>
                 </button>
 
@@ -73,7 +74,7 @@
                             <div class="modal-header">
                                 <h5 class="modal-title" id="modalLabel">Exito</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
+                                        aria-label="Close" id="btn-cerrar"></button>
                             </div>
 
                             <div class="modal-body" id="body">
@@ -172,7 +173,6 @@
                     document.getElementById('body').textContent = '✅ Usuario eliminado correctamente'
                     const modal = new bootstrap.Modal(document.getElementById('infoModal'));
                     modal.show();
-                    window.location.href = "modulo_usuarios.html";
                 } else {
                     const error = await r.text();
                     msg.textContent = "❌ Error al eliminar: " + error;
@@ -184,6 +184,10 @@
             }
 
         })
+
+        document.getElementById('btn-cerrar').addEventListener('click', () => {
+            window.location.href = '{% url 'modulo_usuarios' %}';
+        });
 
     </script>
 {% endblock %}

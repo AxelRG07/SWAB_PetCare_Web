@@ -31,7 +31,7 @@
                 </ul>
             </div>
         </div>
-        {% if user.tipo == 'admin' %}
+        {% if perms.SWAB_APP.add_refugio %}
             <a class="btn btn-primary" href="{% url 'registrar_refugio' %}">Registrar nuevo refugio</a>
         {% endif %}
     </main>
