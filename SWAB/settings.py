@@ -140,4 +140,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ALL_ORIGINS = True
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.ngrok-free.app',
+    'https://*.ngrok-free.dev',
+    'https://localhost',
+    'http://127.0.0.1',
+]
+
 # CORS_ALLOWED_ORIGINS = []
