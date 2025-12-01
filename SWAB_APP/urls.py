@@ -22,7 +22,7 @@ urlpatterns = [
     path('signup/', signup_view, name='signup'),
     path('signin/', signin_view, name='signin'),
     path('signout/', signout_view, name='signout'),
-    path('modulo/usuarios', modulo_usuarios, name='modulo_usuarios'),
+    path('modulo/usuarios', ModuloUsuariosView.as_view(), name='modulo_usuarios'),
     path('modulo/refugios', modulo_refugios, name='modulo_refugios'),
 
 ]

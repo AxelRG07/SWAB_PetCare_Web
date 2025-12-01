@@ -1,5 +1,7 @@
 from idlelib.rpc import request_queue
 
+from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import JsonResponse
@@ -184,9 +186,27 @@ def index(request):
     })
 
 
-@grupo_requerido('Administrador')
-def modulo_usuarios(request):
-    return render(request, 'modulo_usuarios.html', {'u': request.user})
+class ModuloUsuariosView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    template_name = 'modulo_usuarios.html'
+    
+    # MIXIN 1: Configuración de Login
+    login_url = 'signin' 
+    
+    # MIXIN 2: Configuración de Permisos
+    
+    permission_required = 'SWAB_APP.view_customuser' 
+    
+    raise_exception = True
+
+    # Pasamos el contexto (variables) al HTML
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['u'] = self.request.user
+        return context
+
+#@grupo_requerido('Administrador')
+#def modulo_usuarios(request):
+#    return render(request, 'modulo_usuarios.html', {'u': request.user})
 
 
 @grupo_requerido('Administrador')
