@@ -36,4 +36,4 @@ jobs:
     - name: Restart Gunicorn
       run: |
         # Reiniciamos Supervisor para que tome los cambios de código
-        sudo supervisorctl restart gunicorn
+        sudo supervisorctl restart all
