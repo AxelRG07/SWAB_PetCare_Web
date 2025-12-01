@@ -1,0 +1,39 @@
+name: Django CI/CD Deployment
+
+on:
+  push:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.13.7'
+
+    - name: Install Dependencies
+      run: |
+        python -m venv .venv
+        source .venv/bin/activate
+        pip install -r requirements.txt
+
+    - name: Collect Static Files
+      run: |
+        source .venv/bin/activate
+        python manage.py collectstatic --noinput
+
+    - name: Apply Migrations
+      run: |
+        source .venv/bin/activate
+        python manage.py migrate
+
+    - name: Restart Gunicorn
+      run: |
+        # Reiniciamos Supervisor para que tome los cambios de código
+        sudo supervisorctl restart gunicorn
