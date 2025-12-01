@@ -11,6 +11,10 @@ class CustomUser(AbstractUser):
         ('adoptante', 'Adoptante'),
     ]
     tipo = models.CharField(max_length=20, choices=TIPOS_USUARIO, default='adoptante')
+    
+    @property
+    def es_admin_grupo(self):
+        return self.groups.filter(name='Administrador').exists()
 
     def __str__(self):
         return f"{self.first_name} ({self.tipo})"

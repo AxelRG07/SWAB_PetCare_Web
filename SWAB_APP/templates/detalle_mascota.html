@@ -7,17 +7,22 @@
             <h1 class="fw-semibold display-1">Conoce a</h1>
             <h2 id="mascotaNombre" class="display-3  ">{{ mascota.nombre }}</h2>
         </div>
-        {% if usuario.tipo == 'admin' %}
+        {% if user.es_admin_grupo %}
             <div class="fab-container">
                 <div class="fab fab-main">
                     <i class="bi bi-plus-lg">+</i>
                 </div>
-                <div class="fab fab-option">
-                    <a id="btnEditar" title="Editar Mascota" class="">Editar</a>
-                </div>
-                <div class="fab fab-option">
-                    <a id="btnEliminar" title="eliminar">Eliminar</a>
-                </div>
+                {% if perms.SWAB_APP.change_mascota %}
+                    <div class="fab fab-option">
+                        <a id="btnEditar" title="Editar Mascota" class="">Editar</a>
+                    </div>
+                {% endif %}
+                
+                {% if perms.SWAB_APP.delete_mascota %}
+                    <div class="fab fab-option">
+                        <a id="btnEliminar" title="eliminar">Eliminar</a>
+                    </div>
+                {% endif %}
             </div>
         {% endif %}
         <div class="container w-25">

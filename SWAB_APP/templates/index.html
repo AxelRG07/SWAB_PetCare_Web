@@ -1,12 +1,9 @@
 {% extends 'base.html' %}
 
 {% block nav %}
-    {% if user.tipo == "admin" %}
+    {% if user.es_admin_grupo %}
         <li class="nav-item">
             <a class="nav-link" href="{% url 'modulo_usuarios' %}">Modulo de usuarios</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'modulo_refugios' %}">Modulo de refugios</a>
         </li>
     {% endif %}
 {% endblock %}

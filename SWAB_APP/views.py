@@ -27,7 +27,7 @@ class MascotaView(viewsets.ModelViewSet):
     queryset = Mascota.objects.all()
 
 
-@login_required(login_url='signin')
+@grupo_requerido('Administrador')
 def registrar_usuario(request):
     if request.method == 'POST':
         pass1 = request.POST.get('password1')
@@ -76,7 +76,7 @@ def registrar_usuario(request):
     return render(request, 'registrar_usuario.html')
 
 
-@login_required(login_url='signin')
+@grupo_requerido('Administrador')
 def registrar_refugio(request):
     if request.method == 'POST':
         form = RefugioForm(request.POST, request.FILES)
@@ -97,7 +97,7 @@ def registrar_refugio(request):
     })
 
 
-@login_required(login_url='signin')
+@grupo_requerido('Director')
 def registrar_mascota(request, id_refugio):
     refugio = Refugio.objects.get_object_or_404(id=id_refugio)
 
@@ -182,7 +182,7 @@ def modulo_usuarios(request):
     return render(request, 'modulo_usuarios.html', {'u': request.user})
 
 
-@login_required(login_url='signin')
+@grupo_requerido('Administrador')
 def detalles_usuario(request, id_usuario):
     if request.method == 'GET':
         usuario = get_object_or_404(CustomUser, id=id_usuario)
