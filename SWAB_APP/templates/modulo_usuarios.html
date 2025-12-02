@@ -103,7 +103,11 @@
 
                     for (const user of dt) {
                         if (user.tipo !== loggedType) {
-                            let refugioData = null;
+                            let refugioData = {
+                                    nombre: '-'
+                                };
+
+                                console.log(user);
 
                             if (user.groups && user.groups.includes('Director')) {
                                 try {
@@ -112,10 +116,6 @@
 
                                 } catch (e) {
                                     console.error("Error obteniendo refugio: ", e);
-                                }
-                            } else {
-                                refugioData = {
-                                    nombre: '-'
                                 }
                             }
 
