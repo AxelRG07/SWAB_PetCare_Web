@@ -45,7 +45,7 @@ def registrar_usuario(request):
         if pass1 == pass2:
             try:
                 # Usamos atomic para asegurar que se crea el usuario Y se asigna el grupo
-                with transaction.atominc():
+                with transaction.atomic():
                     usuario = CustomUser.objects.create_user(
                         first_name=request.POST.get('first_name'),
                         last_name=request.POST.get('last_name'),
@@ -108,7 +108,7 @@ def registrar_refugio(request):
 
 @grupo_requerido('Director')
 def registrar_mascota(request, id_refugio):
-    refugio = Refugio.objects.get_object_or_404(id=id_refugio)
+    refugio = get_object_or_404(Refugio, id=id_refugio)
 
     if request.method == 'POST':
         form = MascotaForm(request.POST, request.FILES)
@@ -141,9 +141,18 @@ def signup_view(request):
                     email=request.POST['email'],
                     password=request.POST['password1']
                 )
-                usuario.save()
+                
+                try:
+                    grupo_adoptante = Group.objects.get(name='Adoptante')
+                    usuario.groups.add(grupo_adoptante) 
+                except Group.DoesNotExist:
+                    return render(request, 'signup.html', {
+                        'error': 'Error interno: El grupo Adoptante no existe.',
+                    })
+                
                 login(request, usuario)
                 return redirect('index')
+            
             except IntegrityError:
                 return render(request, 'signup.html', {
                     'error': 'error al registrar usuario',

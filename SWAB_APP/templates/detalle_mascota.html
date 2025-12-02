@@ -7,7 +7,7 @@
             <h1 class="fw-semibold display-1">Conoce a</h1>
             <h2 id="mascotaNombre" class="display-3  ">{{ mascota.nombre }}</h2>
         </div>
-        {% if user.es_admin_grupo %}
+        {% if perms.SWAB_APP.change_mascota or perms.SWAB_APP.delete_mascota %}
             <div class="fab-container">
                 <div class="fab fab-main">
                     <i class="bi bi-plus-lg">+</i>
