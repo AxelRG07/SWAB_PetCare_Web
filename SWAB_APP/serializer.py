@@ -5,9 +5,16 @@ from .models import *
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
+    
+    groups = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='name'
+    )
+    
     class Meta:
         model = CustomUser
-        fields = ['id', 'first_name', 'last_name', 'username', 'password', 'email', 'tipo']
+        fields = ['id', 'first_name', 'last_name', 'username', 'password', 'email', 'tipo', 'groups']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):

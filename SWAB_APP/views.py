@@ -45,7 +45,7 @@ def registrar_usuario(request):
         if pass1 == pass2:
             try:
                 # Usamos atomic para asegurar que se crea el usuario Y se asigna el grupo
-                with transaction.atomic():
+                with transaction.atominc():
                     usuario = CustomUser.objects.create_user(
                         first_name=request.POST.get('first_name'),
                         last_name=request.POST.get('last_name'),
